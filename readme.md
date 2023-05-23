@@ -167,8 +167,8 @@ For more information on how to implement ORM-CPP, check out the [post](https://z
 
 ## 🤝 Contributing
 
-Contributions are welcome! If you find a bug or have a feature request, please open an issue on the [issue tracker](https://github.com/JohnDoe/orm-cpp/issues). If you want to contribute code, please fork the repository and submit a pull request.
+Contributions are welcome! If you find a bug or have a feature request, please open an issue on the [issue tracker](https://github.com/hanson-young/orm-cpp/issues). If you want to contribute code, please fork the repository and submit a pull request.
 
 ## 📃 License
 
-ORM-CPP is licensed under the [MIT License](https://github.com/JohnDoe/orm-cpp/blob/master/LICENSE).
+ORM-CPP is licensed under the [MIT License](https://github.com/hanson-young/orm-cpp/blob/main/LICENSE).
