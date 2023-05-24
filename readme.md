@@ -5,7 +5,7 @@ ORM-CPP is a header-only library for modern C++17 that supports PostgreSQL CURD 
 
 ## Features
 - Header-only library
-- Supports PostgreSQL database
+- Supports PostgreSQL database, will support TDengine/CK/sqlite.
 - LINQ syntax for SQL queries
 - No need to write raw SQL code
 - Compile-time reflection can reduce runtime overhead.
