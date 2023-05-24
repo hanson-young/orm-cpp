@@ -15,7 +15,8 @@ ORM-CPP is a header-only library for modern C++17 that supports PostgreSQL CURD 
 ### Installing
 
 To use ORM-CPP, simply add the `*.hpp` header file to your project.Make sure you have installed the PostgreSQL client and server.  
-You can use the command `g++ -o test test.cpp --std=c++17 -lpq` to compile the example program.
+Ubuntu/Debian: `sudo apt install libpq-dev`  
+You can use the command `g++ -o test test.cpp --std=c++17 -lpq -I /usr/include/postgresql` to compile the example program.
 
 ### Usage
 
