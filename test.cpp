@@ -16,7 +16,6 @@ enum Gender: int
 struct person {
     short id;
     char name[10];
-    // std::string name;
     Gender gender;
     int age;
     float score;

@@ -23,14 +23,20 @@ You can use the command `g++ -o test test.cpp --std=c++17 -lpq -I /usr/include/p
 Include the header file `pg_ormlite.hpp` and Create a struct and decorate the struct name and members with the REFLECTION_TEMPLATE macro.
 ```cpp
 #include "pg_ormlite.hpp"
+enum Gender: int
+{
+    Mail,
+    Femail,
+};
+
 struct person {
     short id;
     char name[10];
-    // std::string name;
+    Gender gender;
     int age;
     float score;
 }__attribute__((packed));
-REFLECTION_TEMPLATE(person, id, name, age, score)
+REFLECTION_TEMPLATE(person, id, name, gender, age, score)
 ```
 #### Connect
 To use ORM-CPP, you need to first create a connection object to your PostgreSQL database, like so:
@@ -45,21 +51,21 @@ pg_ormlite::key_map key_map_{"id"};
 pg_ormlite::not_null_map not_null_map_;
 not_null_map_.fields = {"id", "age"};
 conn.create_table<person>(key_map_, not_null_map_);
-// create table if not exists person(id smallint primary key, name varchar(10), age integer not null, score real);
+// create:create table if not exists person(id smallint primary key, name varchar(10), gender integer, age integer not null, score real);
 ```
 #### Insert
 You can use the insert method to insert a single person object or insert multiple objects in batches into the database table.
 ``` cpp
 // insert single object one by one
-person p1{1, "hxf1", 30, 101.1f};
-person p2{2, "hxf2", 28, 102.2f};
-person p3{3, "hxf3", 27, 103.3f};
-person p4{4, "hxf4", 26, 104.4f};
-person p5{5, "hxf1", 30, 108.1f};
-person p6{6, "hxf3", 30, 109.1f};
+person p1{1, "hxf1", Gender::Femail, 30, 101.1f};
+person p2{2, "hxf2", Gender::Femail, 28, 102.2f};
+person p3{3, "hxf3", Gender::Mail, 27, 103.3f};
+person p4{4, "hxf4", Gender::Femail, 26, 104.4f};
+person p5{5, "hxf1", Gender::Mail, 30, 108.1f};
+person p6{6, "hxf3", Gender::Femail, 30, 109.1f};
 
 conn.insert(p1);
-// insert prepare:insert into person(id, name, age, score) values($1, $2, $3, $4);
+// insert prepare:insert into person(id, name, gender, age, score) values($1, $2, $3, $4, $5);
 conn.insert(p2);
 conn.insert(p3);
 conn.insert(p4);
@@ -74,6 +80,7 @@ for (size_t i = 6; i < 10; i++)
     p.id = i + 1;
     std::string name = "hxf" + std::to_string(i + 1);
     strcpy(p.name, name.c_str());
+    p.gender = Gender::Mail;
     p.age = 30 + i;
     p.score = 101.1f + i;
     persons.push_back(p);
@@ -91,18 +98,18 @@ conn.query<person>()
 
 for(auto it: pn1)
 {
-    std::cout<<it.id<<" "<<it.name<<" "<<it.age<<" "<<it.score<<std::endl;
+        std::cout<<it.id<<" "<<it.name<< " "<<it.gender<<" "<<it.age<<" "<<it.score<<std::endl;
 }
 // select * from person where (age > 27 and id < 3) limit 2;
-// 1 hxf1 30 101.1
-// 2 hxf2 28 102.2
+// 1 hxf1 1 30 101.1
+// 2 hxf2 1 28 102.2
 ```
 If you only want to query certain fields, you can use the select method to filter them. In the end, it will return an array of `tuple` objects.
 
 ```cpp
 auto pn2 = 
 conn.query<person>()
-    .select(RNT(person::id), RNT(person::name), RNT(person::age))
+    .select(RNT(person::id), RNT(person::name), RNT(person::gender), RNT(person::age))
     .where(FD(person::age) >= 28 && FD(person::id) < 5)
     .to_vector();
 
@@ -113,9 +120,9 @@ for(auto it: pn2)
     }, it);
     std::cout<<std::endl;
 }
-// select (id), (name), (age) from person where (age >= 28 and id < 5);
-// 1 hxf1 30 
-// 2 hxf2 28 
+// select (id), (name), (gender), (age) from person where (age >= 28 and id < 5);
+// 1 hxf1 1 30 
+// 2 hxf2 1 28 
 ```
 To use the calculation engine of the database itself, you can use more complex operations such as group_by, order_by, etc. You can also add some aggregate functions to perform data statistics. The aggregate functions currently provided include count, sum, avg, max, and min.
 ```cpp
