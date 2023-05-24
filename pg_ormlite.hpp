@@ -1,10 +1,11 @@
 #ifndef PG_ORMLITE_HPP
 #define PG_ORMLITE_HPP
 #include <set>
+#include <iostream>
+#include <cstring>
 #include "reflection.hpp"
 #include "traits_utils.hpp"
 #include "pg_query_object.hpp"
-#include <iostream>
 
 namespace pg_ormlite
 {
@@ -150,6 +151,13 @@ public:
             memcpy(temp.data(), v_str.data(), v_str.size());
             param_values.push_back(std::move(temp)); 
         }
+        else if constexpr(std::is_enum_v<U>)
+        {
+            std::vector<char> temp(20, 0);
+            auto v_str = std::to_string(static_cast<std::underlying_type_t<U>>(value));
+            memcpy(temp.data(), v_str.data(), v_str.size());
+            param_values.push_back(std::move(temp)); 
+        }
         else if constexpr(std::is_same_v<U, std::string>)
         {
             std::vector<char> temp = {};
@@ -243,7 +251,8 @@ public:
             if constexpr(std::is_same_v<U, bool> || 
                          std::is_same_v<U, int> || 
                          std::is_same_v<U, int32_t> || 
-                         std::is_same_v<U, uint32_t>)
+                         std::is_same_v<U, uint32_t> ||
+                         std::is_enum_v<U>)
                 { field_types[Idx] = "integer"; return; }
             if constexpr(std::is_same_v<U, int8_t> || std::is_same_v<U, uint8_t> || 
                          std::is_same_v<U, int16_t> || std::is_same_v<U, uint16_t>)  

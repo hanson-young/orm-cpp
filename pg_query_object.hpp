@@ -1,6 +1,8 @@
 #ifndef PG_QUERY_OBJECT_HPP
 #define PG_QUERY_OBJECT_HPP
 #include <cassert>
+#include <iostream>
+#include <cstring>
 #include <libpq-fe.h>
 #include "reflection.hpp"
 
@@ -303,6 +305,10 @@ public:
         {
             // std::cout<<"smallint:"<<row<<","<<col<<std::endl;
             value = atoi(PQgetvalue(res_, row, col));
+        }
+        else if constexpr(std::is_enum_v<U>)
+        {
+            value = static_cast<U>(atoi(PQgetvalue(res_, row, col)));
         }
         else if constexpr(std::is_floating_point<U>::value)
         {
